@@ -1,0 +1,33 @@
+# Template for deploying the Django image to the cluster provided by the
+# IBM Skills Network lab. Replace the image with the one YOU pushed to your
+# own registry namespace (the lab shows the namespace); nothing here is
+# filled in for you.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: dealership
+  name: dealership
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: dealership
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        run: dealership
+    spec:
+      containers:
+        - image: <YOUR_REGISTRY>/<YOUR_NAMESPACE>/dealership:latest
+          imagePullPolicy: Always
+          name: dealership
+          ports:
+            - containerPort: 8000
+              protocol: TCP
+      restartPolicy: Always

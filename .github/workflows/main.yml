@@ -1,0 +1,57 @@
+name: 'Lint Code'
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  lint_python:
+    name: Lint Python Files
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8
+
+      - name: Run flake8
+        # Fails the job if flake8 reports anything. Settings (excluded
+        # folders such as generated migrations) are in .flake8
+        run: |
+          flake8 server
+          echo "Linted all the Python files successfully"
+
+  lint_js:
+    name: Lint JavaScript Files
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install JSHint
+        run: npm install --global jshint
+
+      - name: Run JSHint
+        # Fails the job if JSHint reports anything. Settings are in
+        # server/database/.jshintrc
+        run: |
+          find ./server/database -name "*.js" -not -path "*/node_modules/*" -print0 | xargs -0 jshint
+          echo "Linted all the JavaScript files successfully"

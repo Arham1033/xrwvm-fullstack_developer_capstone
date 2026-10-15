@@ -1,0 +1,9 @@
+[flake8]
+exclude =
+    .git,
+    __pycache__,
+    migrations,
+    node_modules,
+    venv,
+    .venv,
+    server/frontend/build
